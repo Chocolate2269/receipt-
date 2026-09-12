@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Platform Receipt Generator</title>
+<style>body{font-family:Arial;background:#f4f4f4;padding:15px}.container{max-width:1000px;margin:auto;display:flex;gap:15px;flex-wrap:wrap}.form{flex:1;background:#fff;padding:20px;border-radius:12px;min-width:300px}.form input,.form select,.form textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}.form label{font-size:11px;font-weight:bold;margin-top:8px;display:block;color:#555}.form button{background:#111;color:#fff;padding:12px;width:100%;border:none;border-radius:6px;cursor:pointer;margin-top:8px;font-weight:bold}.receipt{flex:1.3;background:#fff;padding:20px;border-radius:12px;min-width:350px;border-top:6px solid #111}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}th{background:#111;color:#fff;padding:9px;text-align:left}td{border:1px solid #ddd;padding:9px}.total{font-weight:bold;background:#f5f5f5}@media print{.form{display:none}}@media(max-width:700px){.container{flex-direction:column}}</style>
+</head>
+<body>
+<div class="container">
+<div class="form">
+<h3>Generic Generator</h3>
+<label>Company / Platform Name (type any)</label><input id="company" placeholder="e.g. GLCU, Abri, Huntington, etc" value="HUNTINGTON BANK" oninput="generate()">
+<label>Upload Logo (any logo - optional)</label><input type="file" id="logoUpload" accept="image/*">
+<label>Customer Name</label><input id="cName" oninput="generate()">
+<label>Bank Name</label><select id="bank" oninput="generate()"><option>Huntington</option><option>GLCU</option><option>Abri</option><option>Chase</option><option>Bank of America</option><option>Wells Fargo</option><option>Other</option></select>
+<label>Account No (optional)</label><input id="acct" placeholder="Optional" oninput="generate()">
+<label>Routing No (optional)</label><input id="routing" placeholder="Optional" oninput="generate()">
+<label>Amount Deducted $</label><input id="deduct" type="number" value="0" oninput="generate()">
+<label>Amount Added $</label><input id="added" type="number" value="14" oninput="generate()">
+<label>Reason for Amendment</label><textarea id="reason" placeholder="Reason..." oninput="generate()"></textarea>
+<label>Custom Text - Write any text</label><textarea id="note" placeholder="Write any additional info here..." oninput="generate()"></textarea>
+<input id="date" type="date">
+<button onclick="generate()">Generate Receipt</button>
+<button onclick="window.print()" style="background:#333;">Print / Save PDF</button>
+</div>
+<div class="receipt">
+<img id="rLogo" style="display:none;width:60px;height:60px;object-fit:contain;margin:0 auto 10px;display:none;">
+<h2 id="rCompany" style="text-align:center;margin:0; font-size:20px;">HUNTINGTON BANK</h2>
+<p style="text-align:center;font-size:11px;color:#888; letter-spacing:1px;">OFFICIAL AMENDMENT RECEIPT</p>
+<p style="font-size:13px;">Name: <b id="rName">-</b><br>Date: <b id="rDate">-</b></p>
+<p id="bankInfo" style="font-size:12px;background:#fff8e6;padding:8px;border-radius:5px;display:none;">Bank: <span id="rBank"></span> | Acct: <span id="rAcct"></span> | Routing: <span id="rRouting"></span></p>
+<table>
+<tr><th>Field</th><th>Details</th></tr>
+<tr><td>Bank</td><td id="tBank">Huntington</td></tr>
+<tr><td>Amount Deducted</td><td id="tDeduct">$0.00</td></tr>
+<tr><td>Amount Added</td><td id="tAdded">$14.00</td></tr>
+<tr><td>Reason</td><td id="tReason">-</td></tr>
+<tr class="total"><td>Net Change</td><td id="tNet">+$14.00</td></tr>
+</table>
+<div id="noteBox" style="display:none;margin-top:15px;background:#f9f9f9;padding:10px;border-left:3px solid #111;font-size:12px;"><b>Note:</b><br><span id="rNote"></span></div>
+</div>
+</div>
+<script>
+document.getElementById('logoUpload').addEventListener('change',function(e){
+ const file=e.target.files[0]; if(!file) return;
+ const reader=new FileReader();
+ reader.onload=function(ev){const img=document.getElementById('rLogo'); img.src=ev.target.result; img.style.display='block';};
+ reader.readAsDataURL(file);
+});
+function generate(){
+const d=parseFloat(document.getElementById('deduct').value)||0;
+const a=parseFloat(document.getElementById('added').value)||0;
+const net=a-d;
+document.getElementById('rCompany').innerText=document.getElementById('company').value||'OFFICIAL RECEIPT';
+document.getElementById('rName').innerText=document.getElementById('cName').value||'-';
+document.getElementById('rDate').innerText=document.getElementById('date').value||new Date().toLocaleDateString();
+document.getElementById('rBank').innerText=document.getElementById('bank').value;
+document.getElementById('tBank').innerText=document.getElementById('bank').value;
+document.getElementById('tDeduct').innerText='- $'+d.toFixed(2);
+document.getElementById('tAdded').innerText='+ $'+a.toFixed(2);
+document.getElementById('tReason').innerText=document.getElementById('reason').value||'-';
+document.getElementById('tNet').innerText=(net>=0?'+ $':'- $')+Math.abs(net).toFixed(2);
+const acct=document.getElementById('acct').value;
+const rout=document.getElementById('routing').value;
+const bankSel=document.getElementById('bank').value;
+const bInfo=document.getElementById('bankInfo');
+if(acct||rout||bankSel){bInfo.style.display='block';document.getElementById('rAcct').innerText=acct||'****';document.getElementById('rRouting').innerText=rout||'****';}else{bInfo.style.display='none';}
+const n=document.getElementById('note').value;
+document.getElementById('noteBox').style.display=n?'block':'none';
+document.getElementById('rNote').innerText=n;
+}
+document.getElementById('date').valueAsDate=new Date();generate();
+</script>
+</body>
+</html>
