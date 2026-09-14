@@ -1,75 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Multi-Platform Receipt Generator</title>
-<style>body{font-family:Arial;background:#f4f4f4;padding:15px}.container{max-width:1000px;margin:auto;display:flex;gap:15px;flex-wrap:wrap}.form{flex:1;background:#fff;padding:20px;border-radius:12px;min-width:300px}.form input,.form select,.form textarea{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}.form label{font-size:11px;font-weight:bold;margin-top:8px;display:block;color:#555}.form button{background:#111;color:#fff;padding:12px;width:100%;border:none;border-radius:6px;cursor:pointer;margin-top:8px;font-weight:bold}.receipt{flex:1.3;background:#fff;padding:20px;border-radius:12px;min-width:350px;border-top:6px solid #111}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}th{background:#111;color:#fff;padding:9px;text-align:left}td{border:1px solid #ddd;padding:9px}.total{font-weight:bold;background:#f5f5f5}@media print{.form{display:none}}@media(max-width:700px){.container{flex-direction:column}}</style>
-</head>
-<body>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>3 Logos Optional - Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{font-family:Inter,sans-serif;box-sizing:border-box}
+body{background:#eef2f7;padding:15px;margin:0}
+.container{max-width:1000px;margin:auto;display:flex;gap:20px;flex-wrap:wrap}
+.form{flex:1;background:#fff;padding:20px;border-radius:20px;min-width:300px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.form label{font-size:11px;font-weight:700;color:#6b7280;margin-top:12px;display:block;text-transform:uppercase}
+.form input,.form select,.form textarea{width:100%;padding:12px;margin:6px 0;border:1px solid #e5e7eb;border-radius:12px;background:#f9fafb}
+.form button{border-radius:12px;padding:14px;width:100%;border:none;font-weight:700;cursor:pointer;margin-top:10px;background:#111;color:#fff}
+.switch{display:flex;align-items:center;justify-content:space-between;background:#f9fafb;padding:10px 12px;border-radius:12px;margin:6px 0;border:1px solid #e5e7eb}
+.switch input{width:18px;height:18px}
+.receipt{flex:1.3;background:#fff;border-radius:24px;min-width:350px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.receipt-header{background:var(--bank-color,#0a7c42);padding:30px 25px 50px;text-align:center;color:#fff}
+.logo-wrap{width:84px;height:84px;background:#fff;border-radius:20px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.logo-wrap img{width:60px;height:60px;object-fit:contain}
+.receipt-body{padding:22px;margin-top:-30px;background:#fff;border-radius:24px 24px 0 0;position:relative}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-card{background:#f9fafb;border-radius:14px;padding:10px 12px;text-align:left}
+.info-card span{font-size:10px;color:#6b7280;display:block;font-weight:700;text-transform:uppercase}
+.info-card b{font-size:13px}
+table{width:100%;border-collapse:separate;border-spacing:0;margin-top:12px;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden}
+th{background:#f9fafb;padding:12px;font-size:11px;color:#6b7280;text-transform:uppercase}
+td{padding:12px;font-size:13px;border-top:1px solid #f0f0f0}
+.total-row td{background:#111;color:#fff;font-weight:700}
+.note-box{margin-top:14px;background:#fffbeb;border:1px dashed #f59e0b;border-radius:14px;padding:12px;text-align:left;font-size:12px}
+@media print{.form{display:none}}
+</style></head><body>
 <div class="container">
 <div class="form">
-<h3>Generic Generator</h3>
-<label>Company / Platform Name (type any)</label><input id="company" placeholder="e.g. GLCU, Abri, Huntington, etc" value="HUNTINGTON BANK" oninput="generate()">
-<label>Upload Logo (any logo - optional)</label><input type="file" id="logoUpload" accept="image/*">
+<h3 style="margin:0">GLCU / Huntington / Abri</h3>
+<p style="font-size:11px;color:#888">Toggle logos ON/OFF</p>
+
+<label>Bank</label>
+<select id="bank" onchange="changeBank()"><option>Huntington</option><option>GLCU</option><option>Abri</option></select>
+
+<div class="switch"><span>🟢 Show Logo (optional)</span><input type="checkbox" id="showLogo" checked onchange="generate()"></div>
+<div class="switch"><span>🏦 Show Account/Routing (optional)</span><input type="checkbox" id="showBankInfo" checked onchange="generate()"></div>
+<div class="switch"><span>📝 Show Custom Text Box (optional)</span><input type="checkbox" id="showNoteOpt" checked onchange="generate()"></div>
+
+<label>Upload Custom Logo (optional - overrides bank logo)</label><input type="file" id="logoUpload" accept="image/*">
+<button onclick="clearCustom()" style="background:#eee;color:#111;padding:8px;font-size:11px">Clear Custom Logo - Use Bank Logo</button>
+
 <label>Customer Name</label><input id="cName" oninput="generate()">
-<label>Bank Name</label><select id="bank" oninput="generate()"><option>Huntington</option><option>GLCU</option><option>Abri</option><option>Chase</option><option>Bank of America</option><option>Wells Fargo</option><option>Other</option></select>
-<label>Account No (optional)</label><input id="acct" placeholder="Optional" oninput="generate()">
-<label>Routing No (optional)</label><input id="routing" placeholder="Optional" oninput="generate()">
+<label>Account No (optional)</label><input id="acct" oninput="generate()">
+<label>Routing No (optional)</label><input id="routing" oninput="generate()">
 <label>Amount Deducted $</label><input id="deduct" type="number" value="0" oninput="generate()">
 <label>Amount Added $</label><input id="added" type="number" value="14" oninput="generate()">
-<label>Reason for Amendment</label><textarea id="reason" placeholder="Reason..." oninput="generate()"></textarea>
-<label>Custom Text - Write any text</label><textarea id="note" placeholder="Write any additional info here..." oninput="generate()"></textarea>
+<label>Reason for Amendment</label><input id="reason" oninput="generate()">
+<label>Custom Text</label><textarea id="note" oninput="generate()"></textarea>
 <input id="date" type="date">
-<button onclick="generate()">Generate Receipt</button>
-<button onclick="window.print()" style="background:#333;">Print / Save PDF</button>
+<button onclick="window.print()" style="background:#333">Print / PDF</button>
 </div>
+
 <div class="receipt">
-<img id="rLogo" style="display:none;width:60px;height:60px;object-fit:contain;margin:0 auto 10px;display:none;">
-<h2 id="rCompany" style="text-align:center;margin:0; font-size:20px;">HUNTINGTON BANK</h2>
-<p style="text-align:center;font-size:11px;color:#888; letter-spacing:1px;">OFFICIAL AMENDMENT RECEIPT</p>
-<p style="font-size:13px;">Name: <b id="rName">-</b><br>Date: <b id="rDate">-</b></p>
-<p id="bankInfo" style="font-size:12px;background:#fff8e6;padding:8px;border-radius:5px;display:none;">Bank: <span id="rBank"></span> | Acct: <span id="rAcct"></span> | Routing: <span id="rRouting"></span></p>
+<div class="receipt-header" id="headerBg">
+<div class="logo-wrap" id="logoWrap"><img id="rLogo" src="https://logo.clearbit.com/huntington.com"></div>
+<h2 id="rCompany" style="margin:0">HUNTINGTON</h2>
+<p style="margin:4px 0 0;opacity:.85;font-size:11px;letter-spacing:2px">OFFICIAL AMENDMENT</p>
+</div>
+<div class="receipt-body">
+<div class="info-grid">
+<div class="info-card"><span>Customer</span><b id="rName">-</b></div>
+<div class="info-card"><span>Date</span><b id="rDate">-</b></div>
+</div>
+<div id="bankInfoRow" class="info-grid" style="margin-top:10px">
+<div class="info-card"><span>Bank</span><b id="rBank">HUNTINGTON</b></div>
+<div class="info-card"><span>Acct • Routing</span><b><span id="rAcct">****</span> • <span id="rRouting">****</span></b></div>
+</div>
 <table>
-<tr><th>Field</th><th>Details</th></tr>
-<tr><td>Bank</td><td id="tBank">Huntington</td></tr>
-<tr><td>Amount Deducted</td><td id="tDeduct">$0.00</td></tr>
-<tr><td>Amount Added</td><td id="tAdded">$14.00</td></tr>
-<tr><td>Reason</td><td id="tReason">-</td></tr>
-<tr class="total"><td>Net Change</td><td id="tNet">+$14.00</td></tr>
+<tr><th>Item</th><th style="text-align:right">Details</th></tr>
+<tr><td>Bank</td><td id="tBank" style="text-align:right;font-weight:600">HUNTINGTON</td></tr>
+<tr><td>Amount Deducted</td><td id="tDeduct" style="text-align:right;color:#ef4444">- $0.00</td></tr>
+<tr><td>Amount Added</td><td id="tAdded" style="text-align:right;color:#10b981">+ $14.00</td></tr>
+<tr><td>Reason</td><td id="tReason" style="text-align:right">-</td></tr>
+<tr class="total-row"><td>Net Change</td><td id="tNet" style="text-align:right">+$14.00</td></tr>
 </table>
-<div id="noteBox" style="display:none;margin-top:15px;background:#f9f9f9;padding:10px;border-left:3px solid #111;font-size:12px;"><b>Note:</b><br><span id="rNote"></span></div>
+<div id="noteBox" class="note-box"><b>Note:</b><br><span id="rNote"></span></div>
+</div>
 </div>
 </div>
 <script>
-document.getElementById('logoUpload').addEventListener('change',function(e){
- const file=e.target.files[0]; if(!file) return;
- const reader=new FileReader();
- reader.onload=function(ev){const img=document.getElementById('rLogo'); img.src=ev.target.result; img.style.display='block';};
- reader.readAsDataURL(file);
-});
-function generate(){
-const d=parseFloat(document.getElementById('deduct').value)||0;
-const a=parseFloat(document.getElementById('added').value)||0;
-const net=a-d;
-document.getElementById('rCompany').innerText=document.getElementById('company').value||'OFFICIAL RECEIPT';
-document.getElementById('rName').innerText=document.getElementById('cName').value||'-';
-document.getElementById('rDate').innerText=document.getElementById('date').value||new Date().toLocaleDateString();
-document.getElementById('rBank').innerText=document.getElementById('bank').value;
-document.getElementById('tBank').innerText=document.getElementById('bank').value;
-document.getElementById('tDeduct').innerText='- $'+d.toFixed(2);
-document.getElementById('tAdded').innerText='+ $'+a.toFixed(2);
-document.getElementById('tReason').innerText=document.getElementById('reason').value||'-';
-document.getElementById('tNet').innerText=(net>=0?'+ $':'- $')+Math.abs(net).toFixed(2);
-const acct=document.getElementById('acct').value;
-const rout=document.getElementById('routing').value;
-const bankSel=document.getElementById('bank').value;
-const bInfo=document.getElementById('bankInfo');
-if(acct||rout||bankSel){bInfo.style.display='block';document.getElementById('rAcct').innerText=acct||'****';document.getElementById('rRouting').innerText=rout||'****';}else{bInfo.style.display='none';}
-const n=document.getElementById('note').value;
-document.getElementById('noteBox').style.display=n?'block':'none';
-document.getElementById('rNote').innerText=n;
+const cfg={"Huntington":{color:"#0a7c42",logo:"https://logo.clearbit.com/huntington.com"},"GLCU":{color:"#0d2a54",logo:"https://logo.clearbit.com/glcu.org"},"Abri":{color:"#c8102e",logo:"https://logo.clearbit.com/abricu.com"}};
+let customLogo=null;
+function changeBank(){
+ const b=document.getElementById('bank').value;
+ const c=cfg[b];
+ document.documentElement.style.setProperty('--bank-color',c.color);
+ document.getElementById('headerBg').style.background=c.color;
+ if(!customLogo) document.getElementById('rLogo').src=c.logo;
+ document.getElementById('rCompany').innerText=b;
+ document.getElementById('rBank').innerText=b;
+ document.getElementById('tBank').innerText=b;
+ generate();
 }
-document.getElementById('date').valueAsDate=new Date();generate();
+document.getElementById('logoUpload').addEventListener('change',e=>{
+ const f=e.target.files[0]; if(!f)return;
+ const r=new FileReader(); r.onload=ev=>{customLogo=ev.target.result; document.getElementById('rLogo').src=customLogo;}; r.readAsDataURL(f);
+});
+function clearCustom(){customLogo=null; changeBank();}
+function generate(){
+ const d=parseFloat(document.getElementById('deduct').value)||0,a=parseFloat(document.getElementById('added').value)||0,net=a-d;
+ document.getElementById('rName').innerText=document.getElementById('cName').value||'-';
+ document.getElementById('rDate').innerText=document.getElementById('date').value||new Date().toLocaleDateString();
+ document.getElementById('tDeduct').innerText='- $'+d.toFixed(2);
+ document.getElementById('tAdded').innerText='+ $'+a.toFixed(2);
+ document.getElementById('tNet').innerText=(net>=0?'+ $':'- $')+Math.abs(net).toFixed(2);
+ document.getElementById('tReason').innerText=document.getElementById('reason').value||'-';
+ document.getElementById('rAcct').innerText=document.getElementById('acct').value||'****';
+ document.getElementById('rRouting').innerText=document.getElementById('routing').value||'****';
+ document.getElementById('logoWrap').style.display=document.getElementById('showLogo').checked?'flex':'none';
+ document.getElementById('bankInfoRow').style.display=document.getElementById('showBankInfo').checked?'grid':'none';
+ const showNote=document.getElementById('showNoteOpt').checked;
+ const n=document.getElementById('note').value;
+ document.getElementById('noteBox').style.display=(showNote && n)?'block':'none';
+ document.getElementById('rNote').innerText=n;
+}
+document.getElementById('date').valueAsDate=new Date();
+changeBank();
 </script>
-</body>
-</html>
+</body></html>
