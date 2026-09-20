@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Payout Receipt</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:Inter,sans-serif}
+body{background:#f5f5f7;margin:0;padding:20px}
+.card{background:#fff;border-radius:20px;padding:22px;max-width:600px;margin:auto}
+</style>
+</head>
+<body>
+<div class="card">
+<h2 id="plat">MY PLATFORM - PAYOUT</h2>
+<p>Client: <b id="c"></b><br>Amount: <b id="a"></b><br>Ref: <span id="r"></span></p>
+<p style="font-size:10px;color:#888">Main receipt - Original kept by platform</p>
+</div>
+<script>
+let d=JSON.parse(localStorage.getItem('lastReceipt')||'{}')
+plat.innerText=(d.plat||'PLATFORM')+' - PAYOUT'
+c.innerText=d.client||'-'; a.innerText=d.amt||'-'; r.innerText=d.tx||'-'
+</script>
+</body>
+</html>
